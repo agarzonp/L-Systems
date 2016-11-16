@@ -8,6 +8,8 @@
 //
 //
 
+#include "LSystem/LSystem.h"
+
 namespace octet {
  
   class L_system_app : public octet::app 
@@ -77,6 +79,14 @@ namespace octet {
       cameraToWorld.translate(0, 0, 3);
 
       font_texture = resource_dict::get_texture_handle(GL_RGBA, "assets/big_0.gif");
+
+	  // Just for testing purpose...
+	  LSystemConfig lSystemConfig;
+	  LSystemConfigParser parser;
+	  parser.LoadLSystemConfig("config_0.csv", lSystemConfig);
+
+	  LSystem lSystem;
+	  lSystem.Execute(lSystemConfig);
     }
 
 	// this is called to simulate the world

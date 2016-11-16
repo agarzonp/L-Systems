@@ -33,6 +33,15 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{22786083-47af-48b2-98c4-2963f667bc44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\LSystem">
+      <UniqueIdentifier>{6193736e-8cab-423a-ac7a-81ebc1afa867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LSystem\Actions">
+      <UniqueIdentifier>{9769daf2-0453-45d9-96c7-2c44785c3c72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CSVParser">
+      <UniqueIdentifier>{70d5e9d2-fe36-4b9b-afc2-82207f3f93fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -429,6 +438,30 @@
     </ClInclude>
     <ClInclude Include="L_system_app.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\LSystem.h">
+      <Filter>Source Files\LSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\LSystemActions.h">
+      <Filter>Source Files\LSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Actions\Actions.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Actions\LSystemAction.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Actions\DummyAction.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\LSystemConfigParser.h">
+      <Filter>Source Files\LSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\LSystemConfig.h">
+      <Filter>Source Files\LSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CSVParser\CSVParser.h">
+      <Filter>Source Files\CSVParser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

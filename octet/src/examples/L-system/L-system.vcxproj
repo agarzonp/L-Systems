@@ -215,6 +215,14 @@
     <ClInclude Include="..\..\shaders\shader.h" />
     <ClInclude Include="..\..\shaders\shaders.h" />
     <ClInclude Include="..\..\shaders\texture_shader.h" />
+    <ClInclude Include="CSVParser\CSVParser.h" />
+    <ClInclude Include="LSystem\Actions\Actions.h" />
+    <ClInclude Include="LSystem\Actions\DummyAction.h" />
+    <ClInclude Include="LSystem\Actions\LSystemAction.h" />
+    <ClInclude Include="LSystem\LSystem.h" />
+    <ClInclude Include="LSystem\LSystemActions.h" />
+    <ClInclude Include="LSystem\LSystemConfig.h" />
+    <ClInclude Include="LSystem\LSystemConfigParser.h" />
     <ClInclude Include="L_system_app.h" />
   </ItemGroup>
   <ItemGroup>
