@@ -197,6 +197,11 @@ private:
 		{
 			state = SELECT_CONFIG;
 		}
+
+		if (is_key_going_down(key_up))
+		{
+			lSystem.Iterate();
+		}
 	}
 
 	void DrawUI()

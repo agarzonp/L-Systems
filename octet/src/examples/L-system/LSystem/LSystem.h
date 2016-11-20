@@ -16,6 +16,9 @@ class LSystem
 	// the actions
 	LSystemActions actions;
 
+	// configuration
+	const LSystemConfig* config;
+
 public:
 	LSystem()
 	{
@@ -26,23 +29,49 @@ public:
 	{
 	}
 
+	enum ExecuteType
+	{
+		EXECUTE_STEP_BY_STEP,
+		EXECUTE_IMMEDIATE
+	};
 
-	void Execute(const LSystemConfig& config)
+	void Execute(const LSystemConfig& config, ExecuteType type = EXECUTE_STEP_BY_STEP)
 	{
 		Clear();
+
+		this->config = &config;
 
 		// start with the axiom
 		result = config.axiom;
 
 		PrintResult();
 
-		while (iterations < config.n)
+		if (type == EXECUTE_IMMEDIATE)
 		{
-			DoStep(config.rules);
+			while (iterations < config.n)
+			{
+				Iterate();
+			}
+		}
+	}
+
+	void Iterate()
+	{
+		if (iterations < config->n)
+		{
+			DoStep(config->rules);
 			iterations++;
 
 			PrintResult();
 		}
+	}
+
+private:
+
+	void Clear()
+	{
+		config = nullptr;
+		iterations = 0;
 	}
 
 	void DoStep(const ProductionRules& rules)
@@ -66,13 +95,6 @@ public:
 		}
 
 		result = newResult;
-	}
-
-private:
-
-	void Clear()
-	{
-		iterations = 0;
 	}
 
 	void PrintResult()
