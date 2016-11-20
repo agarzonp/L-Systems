@@ -9,11 +9,27 @@
 //
 
 #include "LSystem/LSystem.h"
+#include "CSVParser/CSVParser.h"
 
 namespace octet {
  
   class L_system_app : public octet::app 
   {
+	  enum State
+	  {
+		  SELECT_CONFIG,
+		  RUNNING_CONFIG
+	  };
+
+	  State state;
+
+	  int configIndex;
+
+	  octet::dynarray<octet::string> configFiles;
+	  octet::dynarray<LSystemConfig> lSystemConfigs;
+
+	  LSystem lSystem;
+
     // Matrix to transform points in our camera space to the world.
     // This lets us move our camera
     mat4t cameraToWorld;
@@ -64,13 +80,17 @@ namespace octet {
   public:
 
     // this is called when we construct the class
-    L_system_app(int argc, char **argv) : app(argc, argv), font(512, 256, "assets/big.fnt") {
+    L_system_app(int argc, char **argv) 
+		: app(argc, argv)
+		, font(512, 256, "assets/big.fnt")
+		, state(SELECT_CONFIG)
+		, configIndex(0)
+	{
     }
 
     // this is called once OpenGL is initialized
     void app_init() 
 	{
-
       // set up the shader
       texture_shader_.init();
 
@@ -78,20 +98,26 @@ namespace octet {
       cameraToWorld.loadIdentity();
       cameraToWorld.translate(0, 0, 3);
 
-      font_texture = resource_dict::get_texture_handle(GL_RGBA, "assets/big_0.gif");
+      font_texture = resource_dict::get_texture_handle(GL_RGBA, "assets/big_0.gif"); 
 
-	  // Just for testing purpose...
-	  LSystemConfig lSystemConfig;
-	  LSystemConfigParser parser;
-	  parser.LoadLSystemConfig("config_0.csv", lSystemConfig);
-
-	  LSystem lSystem;
-	  lSystem.Execute(lSystemConfig);
-    }
+	  // Load configurations
+	  LoadConfigurations();
+	}
 
 	// this is called to simulate the world
 	void simulate_world() 
 	{
+		switch (state)
+		{
+		case octet::L_system_app::SELECT_CONFIG:
+			UpdateSelectConfig();
+			break;
+		case octet::L_system_app::RUNNING_CONFIG:
+			UpdateRunningConfig();
+			break;
+		default:
+			break;
+		}
 	}
 
     // this is called to draw the world
@@ -111,9 +137,73 @@ namespace octet {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	  
-      char score_text[32];
-      sprintf(score_text, "L-Sytem\n");
-      draw_text(texture_shader_, -1.75f, 2, 1.0f/256, score_text);
+      char maxConfigFilesText[32];
+      sprintf(maxConfigFilesText, "Max config files: %d\n", configFiles.size());
+      draw_text(texture_shader_, -1.75f, 2, 1.0f/256, maxConfigFilesText);
+
+	  char currentConfigText[512];
+	  sprintf(currentConfigText, "Current config file: %s\n", configFiles[configIndex].c_str());
+	  draw_text(texture_shader_, -1.75f, 1.5f, 1.0f / 256, currentConfigText);
     }
+	
+private:
+	
+	void LoadConfigurations()
+	{
+		// Parse the file that contains all LSystem configuration file names
+		agarzonp::CSVParser csvParser("configFiles.csv");
+		if (csvParser.IsValid())
+		{
+			for (int i = 0; i < csvParser.NumRows(); i++)
+			{
+				configFiles.push_back(csvParser[i][0]);
+			}
+
+		}
+		lSystemConfigs.resize(configFiles.size());
+
+		// load all config files
+		LSystemConfigParser parser;
+		for (unsigned i = 0; i < configFiles.size(); i++)
+		{
+			parser.LoadLSystemConfig(configFiles[i], lSystemConfigs[i]);
+		}
+	}
+
+	void UpdateSelectConfig()
+	{
+		if (is_key_going_down(key_down) || is_key_going_down(key_right))
+		{
+			configIndex++;
+			if (configIndex >= (int)configFiles.size())
+			{
+				configIndex = 0;
+			}
+		}
+
+		if (is_key_going_down(key_up) || is_key_going_down(key_left))
+		{
+			configIndex--;
+			if (configIndex < 0)
+			{
+				configIndex = configFiles.size() - 1;
+			}
+		}
+
+		if (is_key_going_down(key_space))
+		{
+			state = RUNNING_CONFIG;
+			lSystem.Execute(lSystemConfigs[configIndex]);
+		}
+	}
+
+	void UpdateRunningConfig()
+	{
+		if (is_key_going_down(key_esc))
+		{
+			state = SELECT_CONFIG;
+		}
+	}
+
   };
 }
