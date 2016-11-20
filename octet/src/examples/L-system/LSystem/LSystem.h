@@ -18,8 +18,8 @@ class LSystem
 
 public:
 	LSystem()
-		: iterations(0)
 	{
+		Clear();
 	}
 
 	~LSystem()
@@ -29,6 +29,8 @@ public:
 
 	void Execute(const LSystemConfig& config)
 	{
+		Clear();
+
 		// start with the axiom
 		result = config.axiom;
 
@@ -67,6 +69,11 @@ public:
 	}
 
 private:
+
+	void Clear()
+	{
+		iterations = 0;
+	}
 
 	void PrintResult()
 	{
