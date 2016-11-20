@@ -137,13 +137,7 @@ namespace octet {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	  
-      char maxConfigFilesText[32];
-      sprintf(maxConfigFilesText, "Max config files: %d\n", configFiles.size());
-      draw_text(texture_shader_, -1.75f, 2, 1.0f/256, maxConfigFilesText);
-
-	  char currentConfigText[512];
-	  sprintf(currentConfigText, "Current config file: %s\n", configFiles[configIndex].c_str());
-	  draw_text(texture_shader_, -1.75f, 1.5f, 1.0f / 256, currentConfigText);
+	  DrawUI();
     }
 	
 private:
@@ -202,6 +196,55 @@ private:
 		if (is_key_going_down(key_esc))
 		{
 			state = SELECT_CONFIG;
+		}
+	}
+
+	void DrawUI()
+	{
+		char maxConfigFilesText[32];
+		sprintf(maxConfigFilesText, "Max config files: %d\n", configFiles.size());
+		draw_text(texture_shader_, -1.75f, 2, 1.0f / 256, maxConfigFilesText);
+
+		char currentConfigFileText[512];
+		sprintf(currentConfigFileText, "Current config file: %s\n", configFiles[configIndex].c_str());
+		draw_text(texture_shader_, -1.75f, 1.5f, 1.0f / 256, currentConfigFileText);
+
+		LSystemConfig& config = lSystemConfigs[configIndex];
+		char currentConfigText[128];
+		sprintf(currentConfigText, "n: %d   d: %f\nAxiom: %s", config.n, config.d, config.axiom.c_str());
+		draw_text(texture_shader_, -1.75f, 0.5f, 1.0f / 256, currentConfigText);
+
+		std::string rules;
+		for (auto itr = config.rules.begin(); itr != config.rules.end(); ++itr)
+		{
+			rules += itr->first;
+			rules += " -> ";
+			rules += itr->second;
+			rules += "\n";
+		}
+
+		char rulesText[1024];
+		sprintf(rulesText, "%s", rules.c_str());
+		draw_text(texture_shader_, -1.75f, 0.0f, 1.0f / 256, rulesText);
+
+		if (state == SELECT_CONFIG)
+		{
+			char hotKeysInfo[64];
+			sprintf(hotKeysInfo, "Arrow keys: ");
+			draw_text(texture_shader_, -1.75f, -3.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Change Config");
+			draw_text(texture_shader_, -0.5f, -3.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Space key: ");
+			draw_text(texture_shader_, -1.75f, -3.5f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Run LSystem");
+			draw_text(texture_shader_, -0.5f, -3.5f, 1.0f / 256, hotKeysInfo);
+		}
+		else if (state == RUNNING_CONFIG)
+		{
+
 		}
 	}
 
