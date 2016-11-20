@@ -200,7 +200,12 @@ private:
 
 		if (is_key_going_down(key_up))
 		{
-			lSystem.Iterate();
+			lSystem.IncreaseIteration();
+		}
+
+		if (is_key_going_down(key_down))
+		{
+			lSystem.DecreaseIteration();
 		}
 	}
 

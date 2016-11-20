@@ -5,13 +5,15 @@
 #include "LSystemConfigParser.h"
 #include "LSystemActions.h"
 
+#include <stack>
+
 class LSystem
 {
 	// number of iterations
 	int iterations;
 
 	// contains the result for each iteration
-	std::string result;
+	std::stack<std::string> results;
 
 	// the actions
 	LSystemActions actions;
@@ -42,7 +44,7 @@ public:
 		this->config = &config;
 
 		// start with the axiom
-		result = config.axiom;
+		results.push(config.axiom);
 
 		PrintResult();
 
@@ -50,17 +52,28 @@ public:
 		{
 			while (iterations < config.n)
 			{
-				Iterate();
+				IncreaseIteration();
 			}
 		}
 	}
 
-	void Iterate()
+	void IncreaseIteration()
 	{
 		if (iterations < config->n)
 		{
 			DoStep(config->rules);
 			iterations++;
+
+			PrintResult();
+		}
+	}
+
+	void DecreaseIteration()
+	{
+		if (iterations > 0)
+		{
+			UndoStep();
+			iterations--;
 
 			PrintResult();
 		}
@@ -76,11 +89,13 @@ private:
 
 	void DoStep(const ProductionRules& rules)
 	{
-		std::string newResult;
+		std::string newResult; 
+		
+		const std::string& lastResult = results.top();
 
-		for (int i = 0; i < result.size(); i++)
+		for (int i = 0; i < lastResult.size(); i++)
 		{
-			AlphabetSymbol symbol = result[i];
+			AlphabetSymbol symbol = lastResult[i];
 
 			auto& itr = rules.find(symbol);
 			if (itr != rules.end())
@@ -94,14 +109,19 @@ private:
 			}
 		}
 
-		result = newResult;
+		results.push(newResult);
+	}
+
+	void UndoStep()
+	{
+		results.pop();
 	}
 
 	void PrintResult()
 	{
 		printf("\nIteration %d", iterations);
 		printf("\n=============");
-		printf("\n%s\n", result.c_str());
+		printf("\n%s\n", results.top().c_str());
 	}
 
 };
