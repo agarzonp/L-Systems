@@ -219,6 +219,11 @@
     <ClInclude Include="LSystem\Actions\Actions.h" />
     <ClInclude Include="LSystem\Actions\DummyAction.h" />
     <ClInclude Include="LSystem\Actions\LSystemAction.h" />
+    <ClInclude Include="LSystem\Actions\MoveForwardAction.h" />
+    <ClInclude Include="LSystem\Actions\PopStateAction.h" />
+    <ClInclude Include="LSystem\Actions\PushStateAction.h" />
+    <ClInclude Include="LSystem\Actions\TurnLeftAction.h" />
+    <ClInclude Include="LSystem\Actions\TurnRightAction.h" />
     <ClInclude Include="LSystem\LSystem.h" />
     <ClInclude Include="LSystem\LSystemActions.h" />
     <ClInclude Include="LSystem\LSystemConfig.h" />

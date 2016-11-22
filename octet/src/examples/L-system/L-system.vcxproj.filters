@@ -466,6 +466,21 @@
     <ClInclude Include="LSystem\LSystemGraphic.h">
       <Filter>Source Files\LSystem</Filter>
     </ClInclude>
+    <ClInclude Include="LSystem\Actions\MoveForwardAction.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Actions\PopStateAction.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Actions\PushStateAction.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Actions\TurnLeftAction.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Actions\TurnRightAction.h">
+      <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">

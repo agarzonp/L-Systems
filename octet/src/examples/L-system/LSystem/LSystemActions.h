@@ -48,6 +48,11 @@ private:
 		actionsMap.insert(std::pair<std::string, LSystemAction*> (DummyAction::GetID(), new DummyAction()));
 
 		// Below all the actions to be added
+		actionsMap.insert(std::pair<std::string, LSystemAction*>(MoveForwardAction::GetID(), new MoveForwardAction()));
+		actionsMap.insert(std::pair<std::string, LSystemAction*>(PopStateAction::GetID(), new PopStateAction()));
+		actionsMap.insert(std::pair<std::string, LSystemAction*>(PushStateAction::GetID(), new PushStateAction()));
+		actionsMap.insert(std::pair<std::string, LSystemAction*>(TurnLeftAction::GetID(), new TurnLeftAction()));
+		actionsMap.insert(std::pair<std::string, LSystemAction*>(TurnRightAction::GetID(), new TurnRightAction()));
 	}
 
 };
