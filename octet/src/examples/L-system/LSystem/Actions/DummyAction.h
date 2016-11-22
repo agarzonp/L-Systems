@@ -18,7 +18,7 @@ public:
 
 	}
 
-	void Execute() override
+	void Execute(LSystemGraphic& graphic) override
 	{
 
 	}
