@@ -463,6 +463,9 @@
     <ClInclude Include="CSVParser\CSVParser.h">
       <Filter>Source Files\CSVParser</Filter>
     </ClInclude>
+    <ClInclude Include="LSystem\LSystemGraphic.h">
+      <Filter>Source Files\LSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">
