@@ -50,6 +50,9 @@ public:
 		// start with the axiom
 		results.push(config.axiom);
 
+		// create the graphic
+		CreateGraphic();
+
 		PrintResult();
 
 		if (type == EXECUTE_IMMEDIATE)
@@ -87,20 +90,6 @@ public:
 	{
 		if (results.size() > 0)
 		{
-			graphic.Clear();
-
-			const std::string& result = results.top();
-
-			for (int i = 0; i < result.size(); i++)
-			{
-				AlphabetSymbol symbol = result[i];
-
-				const std::string& actionId = config->symbolsToActions[symbol];
-
-				LSystemAction* action = actions.GetAction(actionId.c_str());
-				action->Execute(graphic);
-			}
-
 			graphic.Draw();
 		}
 	}
@@ -136,11 +125,31 @@ private:
 		}
 
 		results.push(newResult);
+
+		CreateGraphic();
 	}
 
 	void UndoStep()
 	{
 		results.pop();
+		CreateGraphic();
+	}
+
+	void CreateGraphic()
+	{
+		graphic.Clear();
+
+		const std::string& result = results.top();
+
+		for (int i = 0; i < result.size(); i++)
+		{
+			AlphabetSymbol symbol = result[i];
+
+			const std::string& actionId = config->symbolsToActions[symbol];
+
+			LSystemAction* action = actions.GetAction(actionId.c_str());
+			action->Execute(graphic, *config);
+		}
 	}
 
 	void PrintResult()
@@ -148,6 +157,8 @@ private:
 		printf("\nIteration %d", iterations);
 		printf("\n=============");
 		printf("\n%s\n", results.top().c_str());
+		
+		graphic.Print();
 	}
 
 };
