@@ -2,6 +2,7 @@
 #define L_SYSTEM_ACTION_H
 
 #include "../LSystemGraphic.h"
+#include "../LSystemConfig.h"
 
 class LSystemAction
 {
@@ -17,7 +18,7 @@ public:
 	{
 	}
 
-	virtual void Execute(LSystemGraphic& graphic) = 0;
+	virtual void Execute(LSystemGraphic& graphic, const LSystemConfig& config) = 0;
 };
 
 #endif // !L_SYSTEM_ACTION_H

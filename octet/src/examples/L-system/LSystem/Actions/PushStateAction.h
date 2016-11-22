@@ -18,9 +18,9 @@ public:
 
 	}
 
-	void Execute(LSystemGraphic& graphic) override
+	void Execute(LSystemGraphic& graphic, const LSystemConfig& config) override
 	{
-
+		graphic.PushState(graphic.currentState());
 	}
 
 private:
