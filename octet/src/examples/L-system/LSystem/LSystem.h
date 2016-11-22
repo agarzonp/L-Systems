@@ -1,9 +1,10 @@
 #ifndef L_SYSTEM_H
 #define L_SYSTEM_H
 
+#include "LSystemGraphic.h"
+#include "LSystemActions.h"
 #include "LSystemConfig.h"
 #include "LSystemConfigParser.h"
-#include "LSystemActions.h"
 
 #include <stack>
 
@@ -19,7 +20,10 @@ class LSystem
 	LSystemActions actions;
 
 	// configuration
-	const LSystemConfig* config;
+	LSystemConfig* config;
+
+	// the graphic to be drawn
+	LSystemGraphic graphic;
 
 public:
 	LSystem()
@@ -37,7 +41,7 @@ public:
 		EXECUTE_IMMEDIATE
 	};
 
-	void Execute(const LSystemConfig& config, ExecuteType type = EXECUTE_STEP_BY_STEP)
+	void Execute(LSystemConfig& config, ExecuteType type = EXECUTE_STEP_BY_STEP)
 	{
 		Clear();
 
@@ -76,6 +80,28 @@ public:
 			iterations--;
 
 			PrintResult();
+		}
+	}
+
+	void Draw()
+	{
+		if (results.size() > 0)
+		{
+			graphic.Clear();
+
+			const std::string& result = results.top();
+
+			for (int i = 0; i < result.size(); i++)
+			{
+				AlphabetSymbol symbol = result[i];
+
+				const std::string& actionId = config->symbolsToActions[symbol];
+
+				LSystemAction* action = actions.GetAction(actionId.c_str());
+				action->Execute(graphic);
+			}
+
+			graphic.Draw();
 		}
 	}
 
