@@ -30,6 +30,7 @@ class LSystemGraphic
 
 	// stack to keep track of previous states
 	std::stack<LSystemGraphicState> states;
+
 public:
 
 	const LSystemGraphicState& currentState() const { return _currentState; }
@@ -56,26 +57,30 @@ public:
 	{
 		vertices.clear();
 		_currentState.Clear();
+
+		AddVertex(_currentState.pos);
 	}
 
 	void Draw()
 	{
 		// TO-DO: draw the list of vertices
-		
-		PrintVertices();
 	}
 
-private:
-
-	void PrintVertices()
+	void Print()
 	{
-		printf("\n\n\nGenerated Vertices\n==================\n\n");
+		printf("\n\nGenerated Vertices\n==================\n\n");
 
 		for (auto& vertex : vertices)
 		{
 			printf("(%f, %f, %f)\n", vertex.x(), vertex.y(), vertex.z());
 		}
+
+		printf("\n\n\n\n");
 	}
+
+private:
+
+	
 };
 
 #endif // !L_SYSTEM_GRAPHIC_H
