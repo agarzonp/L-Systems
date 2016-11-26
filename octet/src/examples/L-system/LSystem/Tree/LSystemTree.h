@@ -89,7 +89,7 @@ public:
 
 	void CreateMesh()
 	{
-		CreateMesh(root);
+		CreateMesh(root);	
 	}
 
 	void Draw()
@@ -108,6 +108,12 @@ private:
 
 	void CreateMesh(LSystemBranch& branch)
 	{
+		if (branch.VertexCount() <= 1)
+		{
+			// do not create a mesh for branches that do not have at least 2 vertices
+			return;
+		}
+
 		// create the mesh for current branch
 		branch.CreateMesh();
 

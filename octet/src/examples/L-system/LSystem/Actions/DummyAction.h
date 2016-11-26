@@ -7,7 +7,7 @@ class DummyAction : public LSystemAction
 {
 public:
 
-	static const char* GetID() { return ""; }
+	static const char* GetID() { return " "; }
 
 	DummyAction()
 	{

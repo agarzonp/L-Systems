@@ -38,7 +38,8 @@ public:
 
 		if (vertex_data)
 		{
-			delete vertex_data;
+			delete[] vertex_data;
+			vertex_data = nullptr;
 
 			glDeleteBuffers(NUM_VERTEX_BUFFERS, vertexBuffers);
 			glDeleteVertexArrays(1, &vertexArrayObject);
@@ -89,7 +90,7 @@ public:
 
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[VERTEX_BUFFER_0]);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL); // LSystemMeshVertex::pos
-		glDrawArrays(GL_LINE_STRIP, 0, numVertices);
+		glDrawArrays(GL_LINE_STRIP, 0, (GLsizei) numVertices);
 		
 		glDisableVertexAttribArray(0);
 	}
