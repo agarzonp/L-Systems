@@ -94,13 +94,14 @@ public:
 		}
 	}
 
-private:
-
 	void Clear()
 	{
 		config = nullptr;
 		iterations = 0;
+		graphic.Clear();
 	}
+
+private:
 
 	void DoStep(const ProductionRules& rules)
 	{

@@ -211,6 +211,8 @@ private:
 		if (is_key_going_down(key_esc))
 		{
 			state = SELECT_CONFIG;
+			lSystem.Clear();
+			return;
 		}
 
 		if (is_key_going_down(key_up))
@@ -272,7 +274,12 @@ private:
 		}
 		else if (state == RUNNING_CONFIG)
 		{
+			char hotKeysInfo[64];
+			sprintf(hotKeysInfo, "Arrow keys: ");
+			draw_text(texture_shader_, -1.75f, -3.25f, 1.0f / 256, hotKeysInfo);
 
+			sprintf(hotKeysInfo, "Increase/Decrease iterations");
+			draw_text(texture_shader_, -0.5f, -3.25f, 1.0f / 256, hotKeysInfo);
 		}
 	}
 
