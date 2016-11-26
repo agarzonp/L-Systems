@@ -21,6 +21,7 @@ public:
 	void Execute(LSystemGraphic& graphic, const LSystemConfig& config) override
 	{
 		// build rotation matrix
+		float angle = config.rightAngle;
 
 		octet::mat4t matrix;
 		matrix.loadIdentity();
