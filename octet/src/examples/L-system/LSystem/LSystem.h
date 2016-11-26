@@ -53,7 +53,7 @@ public:
 		// create the graphic
 		CreateGraphic();
 
-		PrintResult();
+		//PrintResult();
 
 		if (type == EXECUTE_IMMEDIATE)
 		{
@@ -71,7 +71,7 @@ public:
 			DoStep(config->rules);
 			iterations++;
 
-			PrintResult();
+			//PrintResult();
 		}
 	}
 
@@ -82,7 +82,7 @@ public:
 			UndoStep();
 			iterations--;
 
-			PrintResult();
+			//PrintResult();
 		}
 	}
 
@@ -137,8 +137,10 @@ private:
 
 	void CreateGraphic()
 	{
+		// clear current graphic
 		graphic.Clear();
 
+		// execute all the actions attached to current result
 		const std::string& result = results.top();
 
 		for (int i = 0; i < result.size(); i++)
@@ -147,9 +149,12 @@ private:
 
 			const std::string& actionId = config->symbolsToActions[symbol];
 
+			// Execute the action
 			LSystemAction* action = actions.GetAction(actionId.c_str());
 			action->Execute(graphic, *config);
 		}
+		// create the graphic
+		graphic.Create();
 	}
 
 	void PrintResult()

@@ -48,14 +48,14 @@ public:
 		// push current state
 		states.push(currentState_);
 
-		// create a branch from currentState_
-		tree.CreateBranch(currentState_.pos);
+		// add a branch from currentState_.pos
+		tree.AddBranch(currentState_.pos);
 	}
 
 	void PopState()
 	{
-		// create a leaf
-		tree.CreateLeaf(); // TO-DO: pass some kind of randomness?
+		// add a leaf
+		tree.AddLeaf();
 
 		// pop the state
 		currentState_ = states.top();
@@ -69,6 +69,11 @@ public:
 		tree.Clear();
 
 		AddCurrentVertex();
+	}
+
+	void Create()
+	{
+		tree.CreateMesh();
 	}
 
 	void Draw()

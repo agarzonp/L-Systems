@@ -4,21 +4,25 @@
 #include <vector>
 #include <cassert>
 
-typedef octet::vec3 Vertex;
+#include "LSystemMesh.h"
 
 class LSystemBranch
 {
+	// unique identifier for this branch
+	unsigned id_;
+
 	// parent branch: to keep track where we can from
 	LSystemBranch* parent_;
 
 	// children branches: to keep track the different branches that the current branch creates
 	std::vector<LSystemBranch*> children;
 
-	// the vertices that the current branch has
-	std::vector<Vertex> vertices;
+	// the key vertices that the current branch has
+	std::vector<VecVertex> vertices;
 
-	// id
-	unsigned id_;
+	// meshes
+	LSystemMesh branchMesh;
+	LSystemMesh leafMesh;
 
 public:
 
@@ -44,7 +48,7 @@ public:
 		children.push_back(child);
 	}
 
-	const LSystemBranch* GetChild(size_t index) const
+	LSystemBranch* GetChild(size_t index)
 	{
 		assert(index < children.size());
 		if (index < children.size())
@@ -60,12 +64,12 @@ public:
 		return children.size();
 	}
 
-	void AddVertex(Vertex vertex)
+	void AddVertex(VecVertex vertex)
 	{
 		vertices.push_back(vertex);
 	}
 
-	const Vertex* GetVertex(size_t index) const
+	const VecVertex* GetVertex(size_t index) const
 	{
 		assert(index < vertices.size());
 		if (index < vertices.size())
@@ -87,7 +91,48 @@ public:
 		parent_ = nullptr;
 		children.clear();
 		vertices.clear();
+		branchMesh.Clear();
+		leafMesh.Clear();
 	}
+
+	void CreateMesh()
+	{
+		assert(vertices.size() > 1);
+		if (vertices.size() > 1)
+		{
+			// create branch mesh
+			CreateBranchMesh();
+
+			// create leaf mesh
+			//CreateLeafMesh();
+		}
+	}
+
+	void Draw() const
+	{
+		branchMesh.Draw();
+		//leafMesh.Draw();
+	}
+
+	private:
+
+		void CreateBranchMesh()
+		{
+			branchMesh.Create(vertices);
+		}
+
+		void CreateLeafMesh()
+		{
+			float leafLength = 5.0f; // This should be in config
+
+			VecVertex dir = (vertices.back() - vertices[vertices.size() - 2]).normalize();
+
+			std::vector<VecVertex> leafVertices;
+			leafVertices.push_back(vertices.back());
+			leafVertices.push_back(vertices.back() + (dir * leafLength));
+
+			leafMesh.Create(leafVertices);
+		}
 };
 
 #endif // !L_SYSTEM_BRANCH_H

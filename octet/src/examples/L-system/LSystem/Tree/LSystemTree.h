@@ -51,12 +51,12 @@ public:
 		current->Init(branchCount++, nullptr);
 	}
 
-	void AddVertex(const Vertex& vertex)
+	void AddVertex(const VecVertex& vertex)
 	{
 		current->AddVertex(vertex);
 	}
 
-	void CreateBranch(const Vertex& vertex)
+	void AddBranch(const VecVertex& vertex)
 	{
 		// Create a new branch and set the relationship between the current branch and the new one
 		LSystemBranch* newBranch = new LSystemBranch(); // TO-DO: Use a pool!
@@ -73,7 +73,7 @@ public:
 		current = newBranch;
 	}
 
-	void CreateLeaf()
+	void AddLeaf()
 	{
 		// pop the branch from the stack and make it the current branch
 		assert(branchStack.size() > 0);
@@ -83,12 +83,18 @@ public:
 			branchStack.pop();
 		}
 
-		// TO-DO: Create a leaf
+		// Each branch will create a leaf with the last two vertices
+		// There is no real need to add a proper leaf at all
+	}
+
+	void CreateMesh()
+	{
+		CreateMesh(root);
 	}
 
 	void Draw()
 	{
-		// TO-DO: Draw the tree, create a mesh for each branch/leaf?
+		DrawBranch(root);
 	}
 
 	void Print()
@@ -100,7 +106,35 @@ public:
 
 private:
 
-	void PrintBranch(const LSystemBranch& branch)
+	void CreateMesh(LSystemBranch& branch)
+	{
+		// create the mesh for current branch
+		branch.CreateMesh();
+
+		// create the mesh for all children branches
+		for (size_t i = 0; i < branch.ChildCount(); i++)
+		{
+			LSystemBranch* childBranch = branch.GetChild(i);
+
+			CreateMesh(*childBranch);
+		}
+	}
+
+	void DrawBranch(LSystemBranch& branch)
+	{
+		// draw current branch
+		branch.Draw();
+
+		// draw all children
+		for (size_t i = 0; i < branch.ChildCount(); i++)
+		{
+			LSystemBranch* childBranch = branch.GetChild(i);
+
+			DrawBranch(*childBranch);
+		}
+	}
+
+	void PrintBranch(LSystemBranch& branch)
 	{
 		printf("\nBranch %d", branch.id());
 		printf("\n==========");
@@ -118,13 +152,13 @@ private:
 
 		for (size_t i = 0; i < branch.VertexCount(); i++)
 		{
-			const Vertex& vertex = *branch.GetVertex(i);
+			const VecVertex& vertex = *branch.GetVertex(i);
 			printf("(%f, %f, %f)\n", vertex.x(), vertex.y(), vertex.z());
 		}
 
 		for (size_t i = 0; i < branch.ChildCount(); i++)
 		{
-			const LSystemBranch* childBranch = branch.GetChild(i);
+			LSystemBranch* childBranch = branch.GetChild(i);
 
 			PrintBranch(*childBranch);
 		}

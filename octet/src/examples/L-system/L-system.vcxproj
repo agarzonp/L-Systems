@@ -230,6 +230,7 @@
     <ClInclude Include="LSystem\LSystemConfigParser.h" />
     <ClInclude Include="LSystem\LSystemGraphic.h" />
     <ClInclude Include="LSystem\Tree\LSystemBranch.h" />
+    <ClInclude Include="LSystem\Tree\LSystemMesh.h" />
     <ClInclude Include="LSystem\Tree\LSystemTree.h" />
     <ClInclude Include="L_system_app.h" />
   </ItemGroup>

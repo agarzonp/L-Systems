@@ -37,6 +37,10 @@ namespace octet {
     // shader to draw a textured triangle
     texture_shader texture_shader_;
 
+
+	// color shader
+	color_shader color_shader_;
+
 	// a texture for our text
     GLuint font_texture;
 
@@ -93,6 +97,7 @@ namespace octet {
 	{
       // set up the shader
       texture_shader_.init();
+	  color_shader_.init();
 
       // set up the matrices with a camera 5 units from the origin
       cameraToWorld.loadIdentity();
@@ -138,10 +143,16 @@ namespace octet {
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	  
 	  // Draw LSystem
+	  mat4t modelToProjection;
+
+	  // we use a simple solid color shader.
+	  vec4 emissive_color(1, 0, 0, 1);
+	  color_shader_.render(modelToProjection, emissive_color);
 	  lSystem.Draw();
 
 	  // Draw UI
 	  DrawUI();
+	  
     }
 	
 private:
@@ -215,6 +226,9 @@ private:
 
 	void DrawUI()
 	{
+		// unbind the buffer, otherwise the UI disappears!!
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 		char maxConfigFilesText[32];
 		sprintf(maxConfigFilesText, "Max config files: %d\n", configFiles.size());
 		draw_text(texture_shader_, -1.75f, 2, 1.0f / 256, maxConfigFilesText);
