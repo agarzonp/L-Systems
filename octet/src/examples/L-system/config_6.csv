@@ -1,7 +1,6 @@
-n,5
+n,7
 d,22.5
 Symbols,F X + - [ ]
 Actions,F   + - [ ]
 Axiom,X
-X,F−[[X]+X]+F[+FX]−X
-F,FF
+X,F[-FX]F[+FX]FX
