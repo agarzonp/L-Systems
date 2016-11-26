@@ -9,11 +9,23 @@ typedef std::map<AlphabetSymbol, std::string> Actions;
 
 struct LSystemConfig
 {
-	// number of iterations
+	// original number of iterations
+	int n_;
+
+	// original left angle
+	float leftAngle_;
+
+	// original right angle
+	float rightAngle_;
+
+	// variable number of iterations
 	int n;
 
-	// angle of variation
-	float d;
+	// variable left angle for heading variation
+	float leftAngle;
+
+	// variable right angle for heading variation
+	float rightAngle;
 
 	// maps a symbol of the alphabet to an id of an LSystemAction
 	std::map<AlphabetSymbol, std::string> symbolsToActions;
@@ -23,6 +35,13 @@ struct LSystemConfig
 
 	// production rules: maps a symbol of the alphabet to the set of symbols that the rule derives
 	std::map<AlphabetSymbol, std::string> rules;
+
+	void Reset()
+	{
+		n = n_;
+		leftAngle = leftAngle_;
+		rightAngle = rightAngle_;
+	}
 };
 
 #endif // !L_SYSTEM_CONFIG_H

@@ -19,11 +19,12 @@ public:
 		{
 			// FIXME: parse defensively!
 
-			config.n = atoi(parser[0][1]);
-			config.d = (float)atof(parser[1][1]);
+			config.n_ = config.n = atoi(parser[0][1]);
+			config.leftAngle_  = config.leftAngle = (float)atof(parser[1][1]);
+			config.rightAngle_ = config.rightAngle = (float)atof(parser[2][1]);
 
-			std::string symbols = parser[2][1];
-			std::string actions = parser[3][1];
+			std::string symbols = parser[3][1];
+			std::string actions = parser[4][1];
 
 			for (int i = 0; i < symbols.size(); i += 2)
 			{
@@ -32,10 +33,10 @@ public:
 				config.symbolsToActions.insert(std::pair<AlphabetSymbol, std::string>(symbols[i], actionId));
 			}
 
-			config.axiom = parser[4][1];
+			config.axiom = parser[5][1];
 
 			// rules
-			for (int rule = 5; rule < parser.NumRows(); rule++)
+			for (int rule = 6; rule < parser.NumRows(); rule++)
 			{
 				std::string predecessor = parser[rule][0];
 				std::string sucessor = parser[rule][1];

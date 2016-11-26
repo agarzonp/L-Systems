@@ -48,20 +48,6 @@ public:
 
 	void Create(const std::vector<VecVertex>& vecVertex)
 	{
-		/*
-		static float d = 0.0f;
-		numVertices = 2;
-		vertex_data = new LSystemMeshVertex[numVertices];
-		vertex_data[0].pos[0] = -0.5f;
-		vertex_data[0].pos[1] = 0.0f + d;
-		vertex_data[0].pos[2] = 0.0f;
-		vertex_data[1].pos[0] = 0.5f;
-		vertex_data[1].pos[1] = 0.0f + d;
-		vertex_data[1].pos[2] = 0.0f;
-
-		d += 0.25f;
-		*/
-
 		// create mesh vertices
 		numVertices = vecVertex.size();
 		vertex_data = new LSystemMeshVertex[numVertices];

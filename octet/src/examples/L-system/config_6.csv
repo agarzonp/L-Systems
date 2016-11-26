@@ -1,5 +1,6 @@
 n,7
-d,22.5
+leftAngle,22.5
+rightAngle,22.5
 Symbols,F X + - [ ]
 Actions,F   + - [ ]
 Axiom,X

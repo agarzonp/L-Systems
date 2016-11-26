@@ -18,10 +18,12 @@ namespace octet {
 	  enum State
 	  {
 		  SELECT_CONFIG,
+		  MODIFYING_CONFIG,
 		  RUNNING_CONFIG
 	  };
 
 	  State state;
+	  State previousState;
 
 	  int configIndex;
 
@@ -88,6 +90,7 @@ namespace octet {
 		: app(argc, argv)
 		, font(512, 256, "assets/big.fnt")
 		, state(SELECT_CONFIG)
+		, previousState(SELECT_CONFIG)
 		, configIndex(0)
 	{
     }
@@ -116,6 +119,10 @@ namespace octet {
 		{
 		case octet::L_system_app::SELECT_CONFIG:
 			UpdateSelectConfig();
+			break;
+
+		case octet::L_system_app::MODIFYING_CONFIG:
+			UpdateModifyingConfig();
 			break;
 		case octet::L_system_app::RUNNING_CONFIG:
 			UpdateRunningConfig();
@@ -181,46 +188,141 @@ private:
 
 	void UpdateSelectConfig()
 	{
-		if (is_key_going_down(key_down) || is_key_going_down(key_right))
+		if (is_key_going_down(key_ctrl))
 		{
+			// modify current config
+			state = MODIFYING_CONFIG;
+			previousState = SELECT_CONFIG;
+			modifyHotKey = MODIFY_NONE;
+		}
+		else if (is_key_going_down(key_esc))
+		{
+			// reset current config
+			lSystemConfigs[configIndex].Reset();
+		}
+		else if (is_key_going_down(key_up) || is_key_going_down(key_right))
+		{
+			// next config
 			configIndex++;
 			if (configIndex >= (int)configFiles.size())
 			{
 				configIndex = 0;
 			}
 		}
-
-		if (is_key_going_down(key_up) || is_key_going_down(key_left))
+		else if (is_key_going_down(key_down) || is_key_going_down(key_left))
 		{
+			// previous config
 			configIndex--;
 			if (configIndex < 0)
 			{
 				configIndex = configFiles.size() - 1;
 			}
 		}
-
-		if (is_key_going_down(key_space))
+		else if (is_key_going_down(key_space))
 		{
+			// execute the lsystem for the current config
 			state = RUNNING_CONFIG;
 			lSystem.Execute(lSystemConfigs[configIndex]);
 		}
 	}
 
+	enum ModifyHotKey
+	{
+		MODIFY_NONE,
+
+		MODIFY_F1,
+		MODIFY_F2,
+		MODIFY_F3,
+	};
+
+	ModifyHotKey modifyHotKey;
+
+	void UpdateModifyingConfig()
+	{
+		if (is_key_going_down(key_ctrl))
+		{
+			// back to the previous state
+			state = previousState;
+		}
+		else if (is_key_going_down(key_esc))
+		{
+			// reset current config
+			lSystemConfigs[configIndex].Reset();
+		}
+		else if (is_key_going_down(key_f1))
+		{
+			modifyHotKey = MODIFY_F1;
+		}
+		else if (is_key_going_down(key_f2))
+		{
+			modifyHotKey = MODIFY_F2;
+		}
+		else if (is_key_going_down(key_f3))
+		{
+			modifyHotKey = MODIFY_F3;
+		}
+		else if (is_key_down(key_left) || is_key_down(key_down))
+		{
+			// decrease
+			switch (modifyHotKey)
+			{
+			case octet::L_system_app::MODIFY_NONE:
+				break;
+			case octet::L_system_app::MODIFY_F1:
+				lSystemConfigs[configIndex].n -= 1;
+				break;
+			case octet::L_system_app::MODIFY_F2:
+				lSystemConfigs[configIndex].leftAngle -= 0.1f;
+				break;
+			case octet::L_system_app::MODIFY_F3:
+				lSystemConfigs[configIndex].rightAngle -= 0.1f;
+				break;
+			default:
+				break;
+			}
+		}
+		else if (is_key_down(key_right) || is_key_down(key_up))
+		{
+			// increase
+			switch (modifyHotKey)
+			{
+			case octet::L_system_app::MODIFY_NONE:
+				break;
+			case octet::L_system_app::MODIFY_F1:
+				lSystemConfigs[configIndex].n += 1;
+				break;
+			case octet::L_system_app::MODIFY_F2:
+				lSystemConfigs[configIndex].leftAngle += 0.1f;
+				break;
+			case octet::L_system_app::MODIFY_F3:
+				lSystemConfigs[configIndex].rightAngle += 0.1f;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	void UpdateRunningConfig()
 	{
-		if (is_key_going_down(key_esc))
+		if (is_key_going_down(key_ctrl))
 		{
+			// modify
+			state = MODIFYING_CONFIG;
+			previousState = RUNNING_CONFIG;
+			modifyHotKey = MODIFY_NONE;
+		}
+		else if (is_key_going_down(key_esc))
+		{
+			// back to select config state
 			state = SELECT_CONFIG;
 			lSystem.Clear();
-			return;
 		}
-
-		if (is_key_going_down(key_up))
+		else if (is_key_going_down(key_up) || is_key_going_down(key_right))
 		{
 			lSystem.IncreaseIteration();
 		}
-
-		if (is_key_going_down(key_down))
+		else if (is_key_going_down(key_down) || is_key_going_down(key_left))
 		{
 			lSystem.DecreaseIteration();
 		}
@@ -231,18 +333,30 @@ private:
 		// unbind the buffer, otherwise the UI disappears!!
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+		// draw number of config files
 		char maxConfigFilesText[32];
 		sprintf(maxConfigFilesText, "Max config files: %d\n", configFiles.size());
 		draw_text(texture_shader_, -1.75f, 2, 1.0f / 256, maxConfigFilesText);
 
+		// Draw current config
 		char currentConfigFileText[512];
-		sprintf(currentConfigFileText, "Current config file: %s\n", configFiles[configIndex].c_str());
+		sprintf(currentConfigFileText, "Config file: %s\n", configFiles[configIndex].c_str());
 		draw_text(texture_shader_, -1.75f, 1.5f, 1.0f / 256, currentConfigFileText);
 
 		LSystemConfig& config = lSystemConfigs[configIndex];
 		char currentConfigText[128];
-		sprintf(currentConfigText, "n: %d   d: %f\nAxiom: %s", config.n, config.d, config.axiom.c_str());
+		sprintf(currentConfigText, "n: %d", config.n);
 		draw_text(texture_shader_, -1.75f, 0.5f, 1.0f / 256, currentConfigText);
+
+		sprintf(currentConfigText, "leftAngle: %.1f", config.leftAngle);
+		draw_text(texture_shader_, -1.75f, 0.25f, 1.0f / 256, currentConfigText);
+
+		sprintf(currentConfigText, "rightAngle: %.1f", config.rightAngle);
+		draw_text(texture_shader_, -1.75f, 0.0f, 1.0f / 256, currentConfigText);
+
+		sprintf(currentConfigText, "Axiom: %s", config.axiom.c_str());
+		draw_text(texture_shader_, -1.75f, -0.25f, 1.0f / 256, currentConfigText);
+
 
 		std::string rules;
 		for (auto itr = config.rules.begin(); itr != config.rules.end(); ++itr)
@@ -255,31 +369,98 @@ private:
 
 		char rulesText[1024];
 		sprintf(rulesText, "%s", rules.c_str());
-		draw_text(texture_shader_, -1.75f, 0.0f, 1.0f / 256, rulesText);
+		draw_text(texture_shader_, -1.75f, -0.5f, 1.0f / 256, rulesText);
 
-		if (state == SELECT_CONFIG)
+		// Draw hot keys info
+		char hotKeysInfo[64];
+		switch (state)
 		{
-			char hotKeysInfo[64];
+		case SELECT_CONFIG:
+
 			sprintf(hotKeysInfo, "Arrow keys: ");
-			draw_text(texture_shader_, -1.75f, -3.25f, 1.0f / 256, hotKeysInfo);
+			draw_text(texture_shader_, -1.75f, -2.75f, 1.0f / 256, hotKeysInfo);
 
 			sprintf(hotKeysInfo, "Change Config");
-			draw_text(texture_shader_, -0.5f, -3.25f, 1.0f / 256, hotKeysInfo);
+			draw_text(texture_shader_, -0.5f, -2.75f, 1.0f / 256, hotKeysInfo);
 
+			sprintf(hotKeysInfo, "Esc key: ");
+			draw_text(texture_shader_, -1.75f, -3.0f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Reset Config");
+			draw_text(texture_shader_, -0.5f, -3.0f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Ctrl key: ");
+			draw_text(texture_shader_, -1.75f, -3.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Change params");
+			draw_text(texture_shader_, -0.5f, -3.25f, 1.0f / 256, hotKeysInfo);
+			
 			sprintf(hotKeysInfo, "Space key: ");
 			draw_text(texture_shader_, -1.75f, -3.5f, 1.0f / 256, hotKeysInfo);
 
 			sprintf(hotKeysInfo, "Run LSystem");
 			draw_text(texture_shader_, -0.5f, -3.5f, 1.0f / 256, hotKeysInfo);
-		}
-		else if (state == RUNNING_CONFIG)
-		{
-			char hotKeysInfo[64];
+
+			break;
+		case MODIFYING_CONFIG:
+			sprintf(hotKeysInfo, "F1 key: ");
+			draw_text(texture_shader_, -1.75f, -2.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Change n");
+			draw_text(texture_shader_, -0.5f, -2.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "F2 key: ");
+			draw_text(texture_shader_, -1.75f, -2.5f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Change leftAngle");
+			draw_text(texture_shader_, -0.5f, -2.5f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "F3 key: ");
+			draw_text(texture_shader_, -1.75f, -2.75f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Change righAngle");
+			draw_text(texture_shader_, -0.5f, -2.75f, 1.0f / 256, hotKeysInfo);
+
 			sprintf(hotKeysInfo, "Arrow keys: ");
+			draw_text(texture_shader_, -1.75f, -3.0f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Modify param");
+			draw_text(texture_shader_, -0.5f, -3.0f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Ctrl key: ");
 			draw_text(texture_shader_, -1.75f, -3.25f, 1.0f / 256, hotKeysInfo);
 
-			sprintf(hotKeysInfo, "Increase/Decrease iterations");
+			sprintf(hotKeysInfo, "Confirm changes");
 			draw_text(texture_shader_, -0.5f, -3.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Esc key: ");
+			draw_text(texture_shader_, -1.75f, -3.5f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Reset Config");
+			draw_text(texture_shader_, -0.5f, -3.5f, 1.0f / 256, hotKeysInfo);
+
+			break;
+		case RUNNING_CONFIG:
+			sprintf(hotKeysInfo, "Arrow keys: ");
+			draw_text(texture_shader_, -1.75f, -3.0f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "(Un)Do iteration");
+			draw_text(texture_shader_, -0.5f, -3.0f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Ctrl key: ");
+			draw_text(texture_shader_, -1.75f, -3.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Change params");
+			draw_text(texture_shader_, -0.5f, -3.25f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Esc key: ");
+			draw_text(texture_shader_, -1.75f, -3.5f, 1.0f / 256, hotKeysInfo);
+
+			sprintf(hotKeysInfo, "Select config");
+			draw_text(texture_shader_, -0.5f, -3.5f, 1.0f / 256, hotKeysInfo);
+			break;
+		default:
+			break;
 		}
 	}
 
