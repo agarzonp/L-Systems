@@ -23,7 +23,7 @@ public:
 		float distance = 10.0f; // This should be in config
 		graphic.currentState().pos += graphic.currentState().heading * distance;
 
-		graphic.AddVertex(graphic.currentState().pos);
+		graphic.AddCurrentVertex();
 	}
 
 private:

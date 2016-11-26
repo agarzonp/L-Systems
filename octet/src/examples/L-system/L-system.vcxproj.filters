@@ -42,6 +42,9 @@
     <Filter Include="Source Files\CSVParser">
       <UniqueIdentifier>{70d5e9d2-fe36-4b9b-afc2-82207f3f93fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\LSystem\Tree">
+      <UniqueIdentifier>{f3201fb8-f561-4608-bf45-03049e9a5c25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -480,6 +483,12 @@
     </ClInclude>
     <ClInclude Include="LSystem\Actions\TurnRightAction.h">
       <Filter>Source Files\LSystem\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Tree\LSystemTree.h">
+      <Filter>Source Files\LSystem\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem\Tree\LSystemBranch.h">
+      <Filter>Source Files\LSystem\Tree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

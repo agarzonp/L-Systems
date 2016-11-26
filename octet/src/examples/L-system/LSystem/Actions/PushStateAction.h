@@ -20,7 +20,7 @@ public:
 
 	void Execute(LSystemGraphic& graphic, const LSystemConfig& config) override
 	{
-		graphic.PushState(graphic.currentState());
+		graphic.PushState();
 	}
 
 private:

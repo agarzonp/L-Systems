@@ -4,6 +4,8 @@
 #include <list>
 #include <stack>
 
+#include "Tree/LSystemTree.h"
+
 struct LSystemGraphicState
 {
 	// position
@@ -23,63 +25,68 @@ struct LSystemGraphicState
 class LSystemGraphic
 {
 	// current state
-	LSystemGraphicState _currentState;
-
-	// list of vertices to draw
-	std::list<octet::vec3> vertices;
+	LSystemGraphicState currentState_;
 
 	// stack to keep track of previous states
 	std::stack<LSystemGraphicState> states;
 
+	// The tree
+	LSystemTree tree;
+
 public:
 
-	const LSystemGraphicState& currentState() const { return _currentState; }
-	LSystemGraphicState& currentState() { return _currentState; }
+	const LSystemGraphicState& currentState() const { return currentState_; }
+	LSystemGraphicState& currentState() { return currentState_; }
 
-	void AddVertex(const octet::vec3& vertex)
+	void AddCurrentVertex()
 	{
-		vertices.push_back(vertex);
+		tree.AddVertex(currentState_.pos);
 	}
 
-	void PushState(const LSystemGraphicState& state)
+	void PushState()
 	{
-		states.push(state);
+		// push current state
+		states.push(currentState_);
+
+		// create a branch from currentState_
+		tree.CreateBranch(currentState_.pos);
 	}
 
 	void PopState()
 	{
-		_currentState = states.top();
+		// create a leaf
+		tree.CreateLeaf(); // TO-DO: pass some kind of randomness?
 
+		// pop the state
+		currentState_ = states.top();
 		states.pop();
 	}
 
 	void Clear()
 	{
-		vertices.clear();
-		_currentState.Clear();
+		// Clear everything and reset
+		currentState_.Clear();
+		tree.Clear();
 
-		AddVertex(_currentState.pos);
+		AddCurrentVertex();
 	}
 
 	void Draw()
 	{
-		// TO-DO: draw the list of vertices
+		tree.Draw();
 	}
 
 	void Print()
 	{
-		printf("\n\nGenerated Vertices\n==================\n\n");
-
-		for (auto& vertex : vertices)
-		{
-			printf("(%f, %f, %f)\n", vertex.x(), vertex.y(), vertex.z());
-		}
-
-		printf("\n\n\n\n");
+		tree.Print();
 	}
 
 private:
 
+	void AddVertex(const octet::vec3& vertex)
+	{
+		tree.AddVertex(currentState_.pos);
+	}
 	
 };
 
