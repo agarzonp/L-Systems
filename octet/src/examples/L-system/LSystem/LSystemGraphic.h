@@ -76,9 +76,9 @@ public:
 		tree.CreateMesh();
 	}
 
-	void Draw()
+	void Draw(octet::color_shader& shader)
 	{
-		tree.Draw();
+		tree.Draw(shader);
 	}
 
 	void Print()

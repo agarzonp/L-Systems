@@ -39,7 +39,6 @@ namespace octet {
     // shader to draw a textured triangle
     texture_shader texture_shader_;
 
-
 	// color shader
 	color_shader color_shader_;
 
@@ -150,12 +149,7 @@ namespace octet {
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	  
 	  // Draw LSystem
-	  mat4t modelToProjection;
-
-	  // we use a simple solid color shader.
-	  vec4 emissive_color(1, 0, 0, 1);
-	  color_shader_.render(modelToProjection, emissive_color);
-	  lSystem.Draw();
+	  lSystem.Draw(color_shader_);
 
 	  // Draw UI
 	  DrawUI();

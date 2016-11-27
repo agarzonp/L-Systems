@@ -493,6 +493,9 @@
     <ClInclude Include="LSystem\Tree\LSystemMesh.h">
       <Filter>Source Files\LSystem\Tree</Filter>
     </ClInclude>
+    <ClInclude Include="LSystem\Tree\LSystemTreeColour.h">
+      <Filter>Source Files\LSystem\Tree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">

@@ -86,11 +86,11 @@ public:
 		}
 	}
 
-	void Draw()
+	void Draw(octet::color_shader& shader)
 	{
 		if (results.size() > 0)
 		{
-			graphic.Draw();
+			graphic.Draw(shader);
 		}
 	}
 

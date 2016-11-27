@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include "LSystemMesh.h"
+#include "LSystemTreeColour.h"
 
 class LSystemBranch
 {
@@ -104,14 +105,26 @@ public:
 			CreateBranchMesh();
 
 			// create leaf mesh
-			//CreateLeafMesh();
+			CreateLeafMesh();
 		}
 	}
 
-	void Draw() const
+	void Draw(octet::color_shader& shader, int branchDepth) const
 	{
+		octet::mat4t modelToProjection;
+
+		// draw a branch with a color
+		octet::vec4 emissive_color = LSystemTreeColour::GetInstance()->GetBranchColour(branchDepth);
+
+		shader.render(modelToProjection, emissive_color);
+
 		branchMesh.Draw();
-		//leafMesh.Draw();
+
+		// drawn leaf with other color
+		emissive_color = LSystemTreeColour::GetInstance()->GetLeafColour(branchDepth);
+		shader.render(modelToProjection, emissive_color);
+
+		leafMesh.Draw();
 	}
 
 	private:
@@ -123,7 +136,7 @@ public:
 
 		void CreateLeafMesh()
 		{
-			float leafLength = 5.0f; // This should be in config
+			float leafLength = 0.005f; // This should be in config
 
 			VecVertex dir = (vertices.back() - vertices[vertices.size() - 2]).normalize();
 

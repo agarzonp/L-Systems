@@ -92,9 +92,10 @@ public:
 		CreateMesh(root);	
 	}
 
-	void Draw()
+	void Draw(octet::color_shader& shader)
 	{
-		DrawBranch(root);
+		int branchDepth = 0;
+		DrawBranch(root, shader, branchDepth);
 	}
 
 	void Print()
@@ -126,17 +127,20 @@ private:
 		}
 	}
 
-	void DrawBranch(LSystemBranch& branch)
+	void DrawBranch(LSystemBranch& branch, octet::color_shader& shader, int branchDepth)
 	{
 		// draw current branch
-		branch.Draw();
+		branch.Draw(shader, branchDepth);
+
+		// draw all branches with a different colour
+		branchDepth++;
 
 		// draw all children
 		for (size_t i = 0; i < branch.ChildCount(); i++)
 		{
 			LSystemBranch* childBranch = branch.GetChild(i);
 
-			DrawBranch(*childBranch);
+			DrawBranch(*childBranch, shader, branchDepth);
 		}
 	}
 
