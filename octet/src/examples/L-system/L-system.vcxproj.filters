@@ -45,6 +45,9 @@
     <Filter Include="Source Files\LSystem\Tree">
       <UniqueIdentifier>{f3201fb8-f561-4608-bf45-03049e9a5c25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{f5af0987-b9a1-48f4-ab4e-d464b470ebb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -495,6 +498,9 @@
     </ClInclude>
     <ClInclude Include="LSystem\Tree\LSystemTreeColour.h">
       <Filter>Source Files\LSystem\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Transform.h">
+      <Filter>Source Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

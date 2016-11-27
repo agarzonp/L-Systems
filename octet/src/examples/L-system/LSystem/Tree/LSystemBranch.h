@@ -109,10 +109,8 @@ public:
 		}
 	}
 
-	void Draw(octet::color_shader& shader, int branchDepth) const
+	void Draw(octet::color_shader& shader, const octet::mat4t& modelToProjection, int branchDepth) const
 	{
-		octet::mat4t modelToProjection;
-
 		// draw a branch with a color
 		octet::vec4 emissive_color = LSystemTreeColour::GetInstance()->GetBranchColour(branchDepth);
 

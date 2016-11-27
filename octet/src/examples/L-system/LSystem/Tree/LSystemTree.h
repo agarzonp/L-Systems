@@ -5,6 +5,7 @@
 #include <string>
 #include <cassert>
 
+#include "../../Utils/Transform.h"
 #include "LSystemBranch.h"
 
 class LSystemTree
@@ -21,6 +22,24 @@ class LSystemTree
 	// branch count
 	int branchCount;
 
+
+	// bounding square of the tree
+	struct BoundingSquare
+	{
+		VecVertex topLeft;
+		VecVertex bottomRight;
+
+		void Clear()
+		{
+			topLeft = bottomRight = VecVertex(0.0f, 0.0f, 0.0f);
+		}
+	};
+
+	BoundingSquare boundingSquare;
+
+	// transformation applied to the tree
+	Transform transform;
+
 public:
 
 	LSystemTree()
@@ -30,6 +49,10 @@ public:
 
 	void Clear()
 	{
+		transform.SetIdentity();
+
+		boundingSquare.Clear();
+
 		branchCount = 0;
 
 		// clear the root
@@ -53,7 +76,11 @@ public:
 
 	void AddVertex(const VecVertex& vertex)
 	{
+		// add new vertex to current branch
 		current->AddVertex(vertex);
+
+		// update the bounding square
+		UpdateBoundingSquare(vertex);
 	}
 
 	void AddBranch(const VecVertex& vertex)
@@ -90,12 +117,19 @@ public:
 	void CreateMesh()
 	{
 		CreateMesh(root);	
+
+		// calculate the transform to make the mesh to be always on the screen
+		CalculateTransform();
 	}
 
 	void Draw(octet::color_shader& shader)
 	{
+		// set the modelToProjection matrix to be our transform matrix
+		octet::mat4t modelToProjection = transform.GetMatrix();
+
+		// draw all branches
 		int branchDepth = 0;
-		DrawBranch(root, shader, branchDepth);
+		DrawBranch(shader, modelToProjection, root, branchDepth);
 	}
 
 	void Print()
@@ -127,10 +161,10 @@ private:
 		}
 	}
 
-	void DrawBranch(LSystemBranch& branch, octet::color_shader& shader, int branchDepth)
+	void DrawBranch(octet::color_shader& shader, const octet::mat4t& modelToProjection, LSystemBranch& branch, int branchDepth)
 	{
 		// draw current branch
-		branch.Draw(shader, branchDepth);
+		branch.Draw(shader, modelToProjection, branchDepth);
 
 		// draw all branches with a different colour
 		branchDepth++;
@@ -140,9 +174,47 @@ private:
 		{
 			LSystemBranch* childBranch = branch.GetChild(i);
 
-			DrawBranch(*childBranch, shader, branchDepth);
+			DrawBranch(shader, modelToProjection, *childBranch, branchDepth);
 		}
 	}
+
+	void UpdateBoundingSquare(const VecVertex& vertex)
+	{
+		boundingSquare.topLeft.x() = std::fminf(boundingSquare.topLeft.x(), vertex.x());
+		boundingSquare.topLeft.y() = std::fmaxf(boundingSquare.topLeft.y(), vertex.y());
+		boundingSquare.bottomRight.x() = std::fmaxf(boundingSquare.bottomRight.x(), vertex.x());
+		boundingSquare.bottomRight.y() = std::fminf(boundingSquare.bottomRight.y(), vertex.y());
+	}
+
+	void CalculateTransform()
+	{
+		float offset = 0.6f;
+
+		// set scale
+		octet::vec3 scale(1.0f, 1.0f, 1.0f);
+
+		float treeWidth = std::abs(boundingSquare.bottomRight.x() - boundingSquare.topLeft.x());
+		float treeHeight = std::abs(boundingSquare.bottomRight.y() - boundingSquare.topLeft.y());
+
+		if (treeHeight > 2.0f - offset)
+		{
+			float scaleFactor = (2.0f - offset) / treeHeight;
+			
+			scale.x() = scaleFactor;
+			scale.y() = scaleFactor;
+		}
+
+		// set translation
+		float dy = -offset;
+		octet::vec3 translation(0.0f, dy, 0.0f);
+
+		// set transfrom
+		transform.SetIdentity();
+		transform.Translation() = translation;
+		transform.Scale() = scale;
+	}
+
+	
 
 	void PrintBranch(LSystemBranch& branch)
 	{

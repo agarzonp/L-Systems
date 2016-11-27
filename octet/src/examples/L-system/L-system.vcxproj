@@ -234,6 +234,7 @@
     <ClInclude Include="LSystem\Tree\LSystemTree.h" />
     <ClInclude Include="LSystem\Tree\LSystemTreeColour.h" />
     <ClInclude Include="L_system_app.h" />
+    <ClInclude Include="Utils\Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl" />
