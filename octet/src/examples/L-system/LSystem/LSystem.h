@@ -4,7 +4,6 @@
 #include "LSystemGraphic.h"
 #include "LSystemActions.h"
 #include "LSystemConfig.h"
-#include "LSystemConfigParser.h"
 
 #include <stack>
 
@@ -276,9 +275,9 @@ private:
 			const std::string& actionId = config->symbolsToActions[symbol];
 
 			// Execute the action
-			LSystemAction* action = actions.GetAction(actionId.c_str());
-			action->Execute(graphic, *config);
+			actions.ExecuteAction(actionId.c_str(), graphic, *config);
 		}
+
 		// create the graphic
 		graphic.Create();
 	}

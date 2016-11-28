@@ -25,6 +25,17 @@ public:
 		}
 	}
 
+	void ExecuteAction(const char* actionId, LSystemGraphic& graphic, const LSystemConfig& config)
+	{
+		LSystemAction* action = GetAction(actionId);
+		if (action)
+		{
+			action->Execute(graphic, config);
+		}
+	}
+
+private:
+
 	LSystemAction* GetAction(const char* id)
 	{
 		auto& mapItr = actionsMap.find(id);
@@ -38,9 +49,6 @@ public:
 		// return the dummy action if no action was found 
 		return actionsMap[0];
 	}
-
-private:
-
 
 	void RegisterActions()
 	{

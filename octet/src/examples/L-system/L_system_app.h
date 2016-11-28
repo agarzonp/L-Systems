@@ -9,6 +9,7 @@
 //
 
 #include "LSystem/LSystem.h"
+#include "LSystem/LSystemConfigParser.h"
 #include <string>
 
 namespace octet {
