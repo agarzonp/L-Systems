@@ -25,7 +25,7 @@ struct LSystemGraphicState
 class LSystemGraphic
 {
 	// current state
-	LSystemGraphicState currentState_;
+	LSystemGraphicState currentState;
 
 	// stack to keep track of previous states
 	std::stack<LSystemGraphicState> states;
@@ -35,21 +35,27 @@ class LSystemGraphic
 
 public:
 
-	const LSystemGraphicState& currentState() const { return currentState_; }
-	LSystemGraphicState& currentState() { return currentState_; }
-
-	void AddCurrentVertex()
+	void MoveForward(float distance)
 	{
-		tree.AddVertex(currentState_.pos);
+		currentState.pos += currentState.heading * distance;
+
+		// add current vertex
+		AddCurrentVertex();
+	}
+
+	void Rotate(octet::mat4t& rotation)
+	{
+		// transform the heading by the rotation matrix
+		currentState.heading = rotation.rmul(octet::vec4(currentState.heading, 0)).normalize();
 	}
 
 	void PushState()
 	{
 		// push current state
-		states.push(currentState_);
+		states.push(currentState);
 
 		// add a branch from currentState_.pos
-		tree.AddBranch(currentState_.pos);
+		tree.AddBranch(currentState.pos);
 	}
 
 	void PopState()
@@ -58,14 +64,14 @@ public:
 		tree.AddLeaf();
 
 		// pop the state
-		currentState_ = states.top();
+		currentState = states.top();
 		states.pop();
 	}
 
 	void Clear()
 	{
 		// Clear everything and reset
-		currentState_.Clear();
+		currentState.Clear();
 		tree.Clear();
 
 		AddCurrentVertex();
@@ -88,11 +94,10 @@ public:
 
 private:
 
-	void AddVertex(const octet::vec3& vertex)
+	void AddCurrentVertex()
 	{
-		tree.AddVertex(currentState_.pos);
-	}
-	
+		tree.AddVertex(currentState.pos);
+	}	
 };
 
 #endif // !L_SYSTEM_GRAPHIC_H

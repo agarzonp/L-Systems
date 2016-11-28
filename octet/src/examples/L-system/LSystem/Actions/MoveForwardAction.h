@@ -20,10 +20,8 @@ public:
 
 	void Execute(LSystemGraphic& graphic, const LSystemConfig& config) override
 	{
-		float distance = 0.01f;//10.0f; // This should be in config
-		graphic.currentState().pos += graphic.currentState().heading * distance;
-
-		graphic.AddCurrentVertex();
+		float distance = 0.01f; // This should be in config
+		graphic.MoveForward(distance);
 	}
 
 private:

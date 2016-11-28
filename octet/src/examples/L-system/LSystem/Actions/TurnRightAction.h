@@ -27,8 +27,8 @@ public:
 		matrix.loadIdentity();
 		matrix.rotateZ(angle);
 
-		// transform the heading
-		graphic.currentState().heading = matrix.rmul(octet::vec4(graphic.currentState().heading, 0)).normalize();
+		// rotate the graphic
+		graphic.Rotate(matrix);
 	}
 
 private:
