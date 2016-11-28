@@ -9,7 +9,7 @@
 //
 
 #include "LSystem/LSystem.h"
-#include "CSVParser/CSVParser.h"
+#include <string>
 
 namespace octet {
  
@@ -27,7 +27,7 @@ namespace octet {
 
 	  int configIndex;
 
-	  octet::dynarray<octet::string> configFiles;
+	  octet::dynarray<std::string> configFiles;
 	  octet::dynarray<LSystemConfig> lSystemConfigs;
 
 	  LSystem lSystem;
@@ -161,7 +161,7 @@ private:
 	void LoadConfigurations()
 	{
 		// Parse the file that contains all LSystem configuration file names
-		agarzonp::CSVParser csvParser("configFiles.csv");
+		agarzonp::CSVParser csvParser("ConfigFiles/configFiles.csv");
 		if (csvParser.IsValid())
 		{
 			for (int i = 0; i < csvParser.NumRows(); i++)
@@ -176,7 +176,9 @@ private:
 		LSystemConfigParser parser;
 		for (unsigned i = 0; i < configFiles.size(); i++)
 		{
-			parser.LoadLSystemConfig(configFiles[i], lSystemConfigs[i]);
+			std::string filePath("ConfigFiles/");
+			filePath.append(configFiles[i]);
+			parser.LoadLSystemConfig(filePath.c_str(), lSystemConfigs[i]);
 		}
 	}
 

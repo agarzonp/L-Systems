@@ -3,7 +3,7 @@
 
 #include "LSystemConfig.h"
 
-#include "../CSVParser/CSVParser.h"
+#include "../Utils/CSVParser/CSVParser.h"
 
 class LSystemConfigParser
 {
@@ -14,6 +14,8 @@ public:
 	void LoadLSystemConfig(const char* filePath, LSystemConfig& config)
 	{
 		agarzonp::CSVParser parser(filePath);
+
+		assert(parser.IsValid());
 
 		if (parser.IsValid())
 		{
