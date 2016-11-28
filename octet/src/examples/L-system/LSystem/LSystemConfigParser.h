@@ -40,8 +40,24 @@ public:
 			{
 				std::string predecessor = parser[rule][0];
 				std::string sucessor = parser[rule][1];
+				std::string ruleParams; // for stochastic and context-sensitive
+				if (parser[rule].NumTokens() == 3)
+				{
+					ruleParams = parser[rule][2];
+				}
 
-				config.rules.insert(std::pair<AlphabetSymbol, std::string>(predecessor[0], sucessor));
+				auto& entry = config.rules.find(predecessor[0]);
+				if (entry == config.rules.end())
+				{
+					RuleDerivations ruleDerivations;
+					ruleDerivations.push_back(RuleDerivationParam(sucessor, ruleParams));
+
+					config.rules.insert(std::pair<AlphabetSymbol, RuleDerivations >(predecessor[0], ruleDerivations));
+				}
+				else
+				{
+					entry->second.push_back(RuleDerivationParam(sucessor, ruleParams));
+				}
 			}
 		}
 		

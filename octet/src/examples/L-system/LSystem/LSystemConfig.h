@@ -3,10 +3,58 @@
 
 #include <map>
 
+// typedefs for convenience
 typedef char AlphabetSymbol;
-typedef std::map<AlphabetSymbol, std::string> ProductionRules;
-typedef std::map<AlphabetSymbol, std::string> Actions;
+typedef std::string RuleDerivation;
+typedef std::string RuleParam;
 
+// typedef for RuleDerivationParam
+typedef std::pair< RuleDerivation, RuleParam> RuleDerivationParam;
+// ForExample:
+// F(0.5) -> FXF
+//
+// Will be:
+// 
+//std::pair< "FXF" , "0.5"> 
+
+// typedef for RuleDerivations
+typedef std::vector<RuleDerivationParam> RuleDerivations;
+
+// typedef for ProductionRules
+typedef std::map<AlphabetSymbol, RuleDerivations > ProductionRules;
+
+// maps a symbol of the alphabet to the set of symbols that the rule produce
+// Each symbol can produce more than one rule. 
+// The system will evaluate all the RuleParam and decide that RuleDerivation to apply
+// For example:
+//
+// A deterministic LSystem will be:
+//
+// F -> XFX
+// X -> F
+//
+// std::map< 'F', [ ["XFX", ""] ] > 
+// std::map< 'X', [ ["F", ""] ] > 
+//
+// A stochastic LSystem will be:
+//
+// F (0.5)-> FF
+// F (0.5)-> X
+// X -> F
+//
+// std::map< 'F', [ ["FF", "0.5"], ["X", "0.5"] ] >
+// std::map< 'X', [ ["F", ""] ] > 
+//
+// A context senstive LSystem will be:
+//
+// F (X < F > F) -> FF
+// F -> X
+// X -> F
+//
+// std::map< 'F', [ ["FF", "X<F>F"], ["X", ""] ] >
+// std::map< 'X', [ ["F", ""] ] > 
+
+// Struct for defining the configuration of the LSystem
 struct LSystemConfig
 {
 	// original number of iterations
@@ -33,9 +81,10 @@ struct LSystemConfig
 	// starting symbol
 	std::string axiom;
 
-	// production rules: maps a symbol of the alphabet to the set of symbols that the rule derives
-	std::map<AlphabetSymbol, std::string> rules;
+	// production rules
+	ProductionRules rules;
 
+	// reset to original values
 	void Reset()
 	{
 		n = n_;

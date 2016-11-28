@@ -66,7 +66,7 @@ namespace octet {
       enum { max_quads = 32 };
       bitmap_font::vertex vertices[max_quads*4];
       uint32_t indices[max_quads*6];
-      aabb bb(vec3(0, 0, 0), vec3(256, 256, 0));
+      aabb bb(vec3(0, 0, 0), vec3(300, 256, 0));
 
       unsigned num_quads = font.build_mesh(bb, vertices, indices, max_quads, text, 0);
       glActiveTexture(GL_TEXTURE0);
@@ -351,19 +351,38 @@ private:
 		sprintf(currentConfigText, "Axiom: %s", config.axiom.c_str());
 		draw_text(texture_shader_, -1.75f, -0.25f, 1.0f / 256, currentConfigText);
 
-
-		std::string rules;
+		// draw rules
+		
+		float ruleY = -0.5f;
 		for (auto itr = config.rules.begin(); itr != config.rules.end(); ++itr)
 		{
-			rules += itr->first;
-			rules += " -> ";
-			rules += itr->second;
-			rules += "\n";
+			const RuleDerivations& ruleDerivations = itr->second;
+			for (auto& derivationItr = ruleDerivations.begin(); derivationItr < ruleDerivations.end(); ++derivationItr)
+			{
+				std::string rules;
+
+				const RuleDerivationParam& ruleDerivationParam = *derivationItr;
+				
+				rules += itr->first;
+
+				if (!ruleDerivationParam.second.empty())
+				{
+					rules += " (" + ruleDerivationParam.second + ")";
+				}
+				
+				rules += " -> ";
+				rules += ruleDerivationParam.first;
+				rules += "\n";
+
+				char rulesText[1024];
+				sprintf(rulesText, "%s", rules.c_str());
+				draw_text(texture_shader_, -1.75f, ruleY, 1.0f / 256, rulesText);
+
+				ruleY -= 0.25f;
+			}
 		}
 
-		char rulesText[1024];
-		sprintf(rulesText, "%s", rules.c_str());
-		draw_text(texture_shader_, -1.75f, -0.5f, 1.0f / 256, rulesText);
+		
 
 		// Draw hot keys info
 		char hotKeysInfo[64];
