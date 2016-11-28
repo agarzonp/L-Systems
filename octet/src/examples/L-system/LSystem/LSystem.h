@@ -267,16 +267,7 @@ private:
 
 		// execute all the actions attached to current result
 		const std::string& result = results.top();
-
-		for (int i = 0; i < result.size(); i++)
-		{
-			AlphabetSymbol symbol = result[i];
-
-			const std::string& actionId = config->symbolsToActions[symbol];
-
-			// Execute the action
-			actions.ExecuteAction(actionId.c_str(), graphic, *config);
-		}
+		actions.Execute(result, graphic, *config);
 
 		// create the graphic
 		graphic.Create();

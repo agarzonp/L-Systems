@@ -25,6 +25,21 @@ public:
 		}
 	}
 
+	void Execute(const std::string& symbols, LSystemGraphic& graphic, LSystemConfig& config)
+	{
+		for (int i = 0; i < symbols.size(); i++)
+		{
+			AlphabetSymbol symbol = symbols[i];
+
+			const std::string& actionId = config.symbolsToActions[symbol];
+
+			// Execute the action
+			ExecuteAction(actionId.c_str(), graphic, config);
+		}
+	}
+
+private:
+
 	void ExecuteAction(const char* actionId, LSystemGraphic& graphic, const LSystemConfig& config)
 	{
 		LSystemAction* action = GetAction(actionId);
@@ -33,8 +48,6 @@ public:
 			action->Execute(graphic, config);
 		}
 	}
-
-private:
 
 	LSystemAction* GetAction(const char* id)
 	{
