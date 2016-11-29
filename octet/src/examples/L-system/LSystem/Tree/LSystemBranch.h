@@ -109,17 +109,17 @@ public:
 		}
 	}
 
-	void Draw(octet::color_shader& shader, const octet::mat4t& modelToProjection, int branchDepth) const
+	void Draw(octet::color_shader& shader, const octet::mat4t& modelToProjection, int ancestorCount) const
 	{
 		// draw a branch with a color
-		octet::vec4 emissive_color = LSystemTreeColour::GetInstance()->GetBranchColour(branchDepth);
+		octet::vec4 emissive_color = LSystemTreeColour::GetInstance()->GetBranchColour(ancestorCount);
 
 		shader.render(modelToProjection, emissive_color);
 
 		branchMesh.Draw();
 
 		// drawn leaf with other color
-		emissive_color = LSystemTreeColour::GetInstance()->GetLeafColour(branchDepth);
+		emissive_color = LSystemTreeColour::GetInstance()->GetLeafColour(ancestorCount);
 		shader.render(modelToProjection, emissive_color);
 
 		leafMesh.Draw();

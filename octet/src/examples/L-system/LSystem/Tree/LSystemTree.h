@@ -128,8 +128,8 @@ public:
 		octet::mat4t modelToProjection = transform.GetMatrix();
 
 		// draw all branches
-		int branchDepth = 0;
-		DrawBranch(shader, modelToProjection, root, branchDepth);
+		int ancestorCount = 0;
+		DrawBranch(shader, modelToProjection, root, ancestorCount);
 	}
 
 	void Print()
@@ -161,20 +161,20 @@ private:
 		}
 	}
 
-	void DrawBranch(octet::color_shader& shader, const octet::mat4t& modelToProjection, LSystemBranch& branch, int branchDepth)
+	void DrawBranch(octet::color_shader& shader, const octet::mat4t& modelToProjection, LSystemBranch& branch, int ancestorCount)
 	{
 		// draw current branch
-		branch.Draw(shader, modelToProjection, branchDepth);
+		branch.Draw(shader, modelToProjection, ancestorCount);
 
 		// draw all branches with a different colour
-		branchDepth++;
+		ancestorCount++;
 
 		// draw all children
 		for (size_t i = 0; i < branch.ChildCount(); i++)
 		{
 			LSystemBranch* childBranch = branch.GetChild(i);
 
-			DrawBranch(shader, modelToProjection, *childBranch, branchDepth);
+			DrawBranch(shader, modelToProjection, *childBranch, ancestorCount);
 		}
 	}
 

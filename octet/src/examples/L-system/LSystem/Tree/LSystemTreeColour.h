@@ -27,15 +27,15 @@ public:
 		return s_instance;
 	}
 
-	octet::vec4 GetLeafColour(int branchDepth)
+	octet::vec4 GetLeafColour(int ancestorCount)
 	{
-		size_t index = branchDepth >= leafColours.size() ? leafColours.size() - 1 : branchDepth;
+		size_t index = ancestorCount >= leafColours.size() ? leafColours.size() - 1 : ancestorCount;
 		return leafColours[index];
 	}
 
-	octet::vec4 GetBranchColour(int branchDepth)
+	octet::vec4 GetBranchColour(int ancestorCount)
 	{
-		size_t index = branchDepth >= branchColours.size() ? branchColours.size() - 1: branchDepth;
+		size_t index = ancestorCount >= branchColours.size() ? branchColours.size() - 1: ancestorCount;
 		return branchColours[index];
 	}
 
