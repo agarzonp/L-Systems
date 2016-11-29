@@ -77,7 +77,7 @@ public:
 	void AddVertex(const VecVertex& vertex)
 	{
 		// add new vertex to current branch
-		current->AddVertex(vertex);
+		current->AddControlPoint(vertex);
 
 		// update the bounding square
 		UpdateBoundingSquare(vertex);
@@ -91,7 +91,7 @@ public:
 		current->AddChild(newBranch);
 
 		// add the first vertex to the new branch
-		newBranch->AddVertex(vertex);
+		newBranch->AddControlPoint(vertex);
 
 		// push the current branch into the stack
 		branchStack.push(current);
@@ -143,9 +143,9 @@ private:
 
 	void CreateMesh(LSystemBranch& branch)
 	{
-		if (branch.VertexCount() <= 1)
+		if (branch.ControlPointCount() <= 1)
 		{
-			// do not create a mesh for branches that do not have at least 2 vertices
+			// do not create a mesh for branches that do not have at least 2 control points
 			return;
 		}
 
@@ -232,9 +232,9 @@ private:
 		}
 		printf("\nChildren branches: %s\n", childrenIds.empty() ? "-1" : childrenIds.c_str());
 
-		for (size_t i = 0; i < branch.VertexCount(); i++)
+		for (size_t i = 0; i < branch.ControlPointCount(); i++)
 		{
-			const VecVertex& vertex = *branch.GetVertex(i);
+			const VecVertex& vertex = *branch.GetControlPoint(i);
 			printf("(%f, %f, %f)\n", vertex.x(), vertex.y(), vertex.z());
 		}
 

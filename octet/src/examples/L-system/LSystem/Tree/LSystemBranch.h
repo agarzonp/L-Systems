@@ -12,14 +12,14 @@ class LSystemBranch
 	// unique identifier for this branch
 	unsigned id_;
 
-	// parent branch: to keep track where we can from
+	// parent branch: to keep track where we come from
 	LSystemBranch* parent_;
 
 	// children branches: to keep track the different branches that the current branch creates
 	std::vector<LSystemBranch*> children;
 
-	// the key vertices that the current branch has
-	std::vector<VecVertex> vertices;
+	// the control points that the current branch has for mesh creation
+	std::vector<VecVertex> controlPoints;
 
 	// meshes
 	LSystemMesh branchMesh;
@@ -65,25 +65,25 @@ public:
 		return children.size();
 	}
 
-	void AddVertex(VecVertex vertex)
+	void AddControlPoint(VecVertex vertex)
 	{
-		vertices.push_back(vertex);
+		controlPoints.push_back(vertex);
 	}
 
-	const VecVertex* GetVertex(size_t index) const
+	const VecVertex* GetControlPoint(size_t index) const
 	{
-		assert(index < vertices.size());
-		if (index < vertices.size())
+		assert(index < controlPoints.size());
+		if (index < controlPoints.size())
 		{
-			return &vertices[index];
+			return &controlPoints[index];
 		}
 
 		return nullptr;
 	}
 
-	size_t VertexCount() const
+	size_t ControlPointCount() const
 	{
-		return vertices.size();
+		return controlPoints.size();
 	}
 
 	void Clear()
@@ -91,15 +91,15 @@ public:
 		id_ = 0;
 		parent_ = nullptr;
 		children.clear();
-		vertices.clear();
+		controlPoints.clear();
 		branchMesh.Clear();
 		leafMesh.Clear();
 	}
 
 	void CreateMesh()
 	{
-		assert(vertices.size() > 1);
-		if (vertices.size() > 1)
+		assert(controlPoints.size() > 1);
+		if (controlPoints.size() > 1)
 		{
 			// create branch mesh
 			CreateBranchMesh();
@@ -129,18 +129,22 @@ public:
 
 		void CreateBranchMesh()
 		{
-			branchMesh.Create(vertices);
+			// We could use the controlPoints to actually create a more interesting shape
+			// But for simplicity, the controlPoints will be the vertices of the mesh
+			branchMesh.Create(controlPoints);
 		}
 
 		void CreateLeafMesh()
 		{
 			float leafLength = 0.005f; // This should be in config
 
-			VecVertex dir = (vertices.back() - vertices[vertices.size() - 2]).normalize();
+			// Use the last control points to create a "leaf"
+			// for simplicity it will be just a line between those two points
+			VecVertex dir = (controlPoints.back() - controlPoints[controlPoints.size() - 2]).normalize();
 
 			std::vector<VecVertex> leafVertices;
-			leafVertices.push_back(vertices.back());
-			leafVertices.push_back(vertices.back() + (dir * leafLength));
+			leafVertices.push_back(controlPoints.back());
+			leafVertices.push_back(controlPoints.back() + (dir * leafLength));
 
 			leafMesh.Create(leafVertices);
 		}
